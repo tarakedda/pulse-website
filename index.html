@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Pulse is an undergraduate medical magazine at the University of Chicago exploring the intersection between creativity and medicine.">
+<meta property="og:title" content="Pulse Medical Magazine">
+<meta property="og:description" content="An undergraduate medical magazine at the University of Chicago.">
+<meta property="og:image" content="images/logo.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23F4F8FC'/%3E%3Cpath d='M2 18h7l2-4 3 9 3-19 3 21 2-7h8' fill='none' stroke='%23E8132E' stroke-width='2.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>Pulse Medical Magazine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Michroma&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout: clinical ECG-paper hero with a live trace strip, then alternating paper/white editorial sections on a 1160px column. */
+:root {
+  --paper: #F4F8FC;        /* the logo's pale clinical ground */
+  --surface: #FFFFFF;
+  --ink: #0E1726;
+  --muted: #536176;
+  --line: #D8E1EB;
+  --red: #E8132E;          /* logo red */
+  --red-text: #C40F27;     /* red for small text, AA on paper */
+  --on-red: #FFFFFF;
+  --grid-minor: rgba(232, 19, 46, 0.07);
+  --grid-major: rgba(232, 19, 46, 0.15);
+  --glow: rgba(232, 19, 46, 0.35);
+  --nav-bg: rgba(244, 248, 252, 0.86);
+
+  --font-mark: "Michroma", "Eurostile", "Arial Black", sans-serif;
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --wrap: 1160px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #09101B; --surface: #0F1826; --ink: #E8EEF6; --muted: #95A3B7; --line: #213045;
+    --red: #FF3B55; --red-text: #FF6378; --on-red: #1A0408;
+    --grid-minor: rgba(255, 59, 85, 0.06); --grid-major: rgba(255, 59, 85, 0.13);
+    --glow: rgba(255, 59, 85, 0.55); --nav-bg: rgba(9, 16, 27, 0.86);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #09101B; --surface: #0F1826; --ink: #E8EEF6; --muted: #95A3B7; --line: #213045;
+  --red: #FF3B55; --red-text: #FF6378; --on-red: #1A0408;
+  --grid-minor: rgba(255, 59, 85, 0.06); --grid-major: rgba(255, 59, 85, 0.13);
+  --glow: rgba(255, 59, 85, 0.55); --nav-bg: rgba(9, 16, 27, 0.86);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; border-radius: 2px; }
+
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- Shared type ---------- */
+.eyebrow, .label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red-text);
+  margin: 0;
+}
+.label { color: var(--muted); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; text-wrap: balance; margin: 0; line-height: 1.08; letter-spacing: -0.01em; }
+h2 { font-size: clamp(2rem, 4.2vw, 3.1rem); }
+h3 { font-size: 1.4rem; line-height: 1.2; }
+p { margin: 0; }
+.section-head { display: grid; gap: 14px; max-width: 720px; }
+.section-head p.intro { color: var(--muted); max-width: 62ch; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.95rem;
+  padding: 12px 20px; border-radius: 999px; text-decoration: none;
+  border: 1.5px solid var(--red); transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+.btn-primary { background: var(--red); color: var(--on-red); }
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost { color: var(--red-text); background: transparent; }
+.btn-ghost:hover { background: var(--red); color: var(--on-red); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--nav-bg);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; }
+.brand { display: flex; align-items: center; text-decoration: none; color: var(--red); }
+.brand svg { height: 34px; width: auto; }
+.nav-links { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.nav-links a {
+  display: block; padding: 8px 12px; border-radius: 999px; text-decoration: none;
+  font-size: 0.92rem; font-weight: 500; color: var(--ink);
+}
+.nav-links a:hover { color: var(--red-text); }
+.nav-links a.cta { background: var(--red); color: var(--on-red); margin-left: 6px; }
+.menu-btn {
+  display: none; background: none; border: 1px solid var(--line); color: var(--ink);
+  border-radius: 999px; padding: 8px 14px; font: 500 0.85rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+}
+@media (max-width: 860px) {
+  .menu-btn { display: inline-block; }
+  .nav-links {
+    display: none; position: absolute; left: 0; right: 0; top: 100%;
+    flex-direction: column; gap: 0; padding: 8px var(--gutter) 16px;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 12px 0; border-radius: 0; border-bottom: 1px solid var(--line); }
+  .nav-links a.cta { background: none; color: var(--red-text); margin: 0; border-bottom: 0; }
+}
+
+/* ---------- ECG paper ---------- */
+.ecg-paper {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+  background-position: -1px -1px;
+}
+
+/* ---------- Hero ---------- */
+.hero { border-bottom: 1px solid var(--line); overflow: hidden; }
+.hero-grid {
+  display: grid; gap: 40px; align-items: end;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.9fr);
+  padding-block: clamp(56px, 9vw, 104px) 28px;
+}
+.hero-copy { display: grid; gap: 22px; min-width: 0; }
+.hero h1 { font-size: clamp(2.7rem, 6.6vw, 5rem); line-height: 1.02; }
+.hero h1 em { font-style: italic; color: var(--red-text); }
+.hero .lead { font-size: 1.15rem; color: var(--muted); max-width: 52ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+
+.monitor {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 6px 20px; min-width: 0;
+  box-shadow: 0 1px 0 var(--line), 0 18px 40px -28px rgba(14, 23, 38, 0.35);
+}
+.monitor-row { display: grid; gap: 2px; padding-block: 14px; border-bottom: 1px dashed var(--line); }
+.monitor-row:last-child { border-bottom: 0; }
+.monitor-row .value { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.25; }
+.monitor-head { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; }
+.live { display: inline-flex; align-items: center; gap: 8px; font: 500 0.72rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--red-text); }
+.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: beat 1.2s ease-in-out infinite; }
+@keyframes beat { 0%, 100% { transform: scale(1); opacity: 1; } 15% { transform: scale(1.45); } 30% { transform: scale(1); opacity: .7; } }
+
+.strip { position: relative; padding-block: 8px 18px; }
+.strip svg { display: block; width: 100%; height: clamp(96px, 13vw, 150px); overflow: visible; }
+.trace { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.sweep { fill: none; stroke: var(--red); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  stroke-dasharray: 22 978; filter: drop-shadow(0 0 6px var(--glow)); animation: sweep 4.2s linear infinite; }
+@keyframes sweep { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.strip-meta {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px;
+  font: 400 0.72rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}
+@media (prefers-reduced-motion: reduce) { .sweep { display: none; } .live::before { animation: none; } }
+@media (max-width: 860px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Sections ---------- */
+section.block { padding-block: clamp(64px, 9vw, 112px); }
+section.alt { background: var(--surface); border-block: 1px solid var(--line); }
+
+/* About */
+.about-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+.about-statement { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.25rem); line-height: 1.25; text-wrap: balance; }
+.about-statement em { color: var(--red-text); }
+.about-body { display: grid; gap: 22px; color: var(--ink); max-width: 60ch; }
+.topics { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.topics li {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding-block: 12px; border-bottom: 1px solid var(--line);
+  font-family: var(--font-display); font-size: 1.25rem;
+}
+.topics li span { font: 400 0.72rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.topics li.more { font-style: italic; color: var(--muted); }
+@media (max-width: 760px) { .about-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Issues */
+.issues-layout { display: grid; gap: 56px; margin-top: 44px; }
+.featured { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.featured-copy { display: grid; gap: 16px; max-width: 56ch; }
+.featured-copy h3 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.1; }
+.featured-copy p.desc { color: var(--muted); }
+.cover {
+  position: relative; aspect-ratio: 3 / 4; width: 100%; max-width: 100%;
+  border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+  display: grid; grid-template-rows: auto 1fr auto; padding: 16px;
+  box-shadow: 0 24px 40px -30px rgba(14, 23, 38, 0.45);
+}
+.cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cover .mini-mark { color: var(--red); width: 70%; }
+.cover .cover-note { align-self: center; justify-self: center; font: 500 0.7rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); border: 1px dashed var(--line); padding: 6px 10px; background: var(--surface); border-radius: 3px; }
+.cover .cover-foot { font: 500 0.7rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); display: flex; justify-content: space-between; }
+
+.archive-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+.archive { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 28px; margin-top: 24px; }
+.issue-card { display: grid; gap: 12px; text-decoration: none; min-width: 0; }
+.issue-card h4 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 0; line-height: 1.2; }
+.issue-card .read { font: 500 0.75rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--red-text); }
+.issue-card:hover .cover { transform: translateY(-3px); }
+.issue-card .cover { transition: transform .2s ease; }
+@media (max-width: 700px) { .featured { grid-template-columns: minmax(0, 1fr); } .featured .cover { max-width: 300px; } }
+
+/* Events */
+.events { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.event {
+  display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 24px; align-items: start;
+  padding-block: 26px; border-bottom: 1px solid var(--line);
+}
+.date {
+  display: grid; justify-items: center; padding: 10px 0 8px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); font-variant-numeric: tabular-nums;
+}
+.date .m { font: 500 0.72rem var(--font-mono); letter-spacing: .14em; color: var(--red-text); text-transform: uppercase; }
+.date .d { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; }
+.date .w { font: 400 0.68rem var(--font-mono); letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+.event-body { display: grid; gap: 6px; }
+.event-meta { font: 400 0.82rem var(--font-mono); color: var(--muted); }
+.event-body p.desc { color: var(--ink); max-width: 62ch; }
+.tag { font: 500 0.7rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--red-text); border: 1px solid currentColor; border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+@media (max-width: 640px) {
+  .event { grid-template-columns: 72px minmax(0, 1fr); gap: 16px; }
+  .event .tag { grid-column: 2; justify-self: start; }
+  .date .d { font-size: 1.7rem; }
+}
+
+/* Team */
+.team-group { display: grid; gap: 18px; margin-top: 48px; }
+.group-label { display: flex; align-items: center; gap: 14px; }
+.group-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.people { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 200px)); gap: 24px; }
+.person { margin: 0; display: grid; gap: 12px; min-width: 0; }
+.headshot {
+  aspect-ratio: 4 / 5; width: 100%; border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
+  display: grid; place-items: center; position: relative;
+}
+.headshot img { width: 100%; height: 100%; object-fit: cover; }
+.headshot .silhouette { width: 46%; color: var(--muted); opacity: .45; }
+.headshot .ph { position: absolute; bottom: 10px; left: 10px; font: 500 0.66rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.person figcaption { display: grid; gap: 2px; }
+.person .name { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.2; }
+.person .role { font-size: 0.88rem; color: var(--muted); }
+.team-split { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; }
+@media (max-width: 600px) {
+  .team-split { grid-template-columns: minmax(0, 1fr); }
+  .people { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+
+/* Join */
+.roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 44px; border-top: 2px solid var(--red); }
+.role-col { display: grid; gap: 10px; align-content: start; padding: 26px 28px 8px 0; }
+.role-col + .role-col { padding-left: 28px; border-left: 1px solid var(--line); }
+.role-col .label { color: var(--red-text); }
+.role-col p { color: var(--muted); }
+.join-note {
+  margin-top: 44px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 24px 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper);
+}
+.join-note p { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.3; max-width: 40ch; }
+@media (max-width: 760px) {
+  .roles { grid-template-columns: minmax(0, 1fr); }
+  .role-col, .role-col + .role-col { padding: 22px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+}
+
+/* Contact */
+.contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 80px); align-items: start; }
+.channels { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.channel { display: grid; gap: 6px; padding-block: 20px; border-bottom: 1px solid var(--line); }
+.channel .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.channel .value { font-family: var(--font-display); font-size: clamp(1.25rem, 2.4vw, 1.6rem); text-decoration: none; overflow-wrap: anywhere; }
+.channel a.value:hover { color: var(--red-text); }
+.copy-btn {
+  font: 500 0.7rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase;
+  background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+}
+.copy-btn:hover { color: var(--red-text); border-color: var(--red); }
+@media (max-width: 760px) { .contact-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Footer */
+footer { background: var(--surface); border-top: 1px solid var(--line); padding-block: 48px 40px; }
+.foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; }
+.foot .lockup { color: var(--red); width: min(360px, 100%); }
+.foot-meta { display: grid; gap: 6px; font-size: 0.85rem; color: var(--muted); text-align: right; }
+.disclaimer { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); max-width: 80ch; }
+@media (max-width: 700px) { .foot { grid-template-columns: minmax(0, 1fr); } .foot-meta { text-align: left; } }
+</style>
+</head>
+<body>
+
+
+<!-- Reusable shapes (the Pulse wordmark and a headshot silhouette) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="silhouette" viewBox="0 0 100 100"><circle cx="50" cy="36" r="20" fill="currentColor"/><path d="M12 100c2-24 18-38 38-38s36 14 38 38z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================= NAVIGATION ================= -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="Pulse Medical Magazine, home">
+      <svg viewBox="0 0 200 42" role="img" aria-hidden="true">
+        <text x="0" y="25" font-family="Michroma, Arial Black, sans-serif" font-size="22" textLength="96" lengthAdjust="spacingAndGlyphs" fill="currentColor">PULSE</text>
+        <path d="M0 32 H112 L118 28 L122 35 L128 26 L134 19 L139 36 L145 3 L151 40 L156 27 L160 31 L166 23 L174 32 H198" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#issues">Issues</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#team">Our Team</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a class="cta" href="#join">Join Pulse</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero ecg-paper" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Welcome to Pulse Magazine’s website</p>
+      <h1 id="hero-title">Where creativity meets <em>medicine.</em></h1>
+      <p class="lead">Pulse is an undergraduate medical magazine at the University of Chicago, written, edited, and designed entirely by students.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#issues">Read the latest issue</a>
+        <a class="btn btn-ghost" href="#join">Join the staff</a>
+      </div>
+    </div>
+
+    <!-- Quick-glance panel. Update these three lines whenever things change. -->
+    <aside class="monitor" aria-label="At a glance">
+      <div class="monitor-head"><span class="label">At a glance</span><span class="live">Live</span></div>
+      <div class="monitor-row"><span class="label">Current issue</span><span class="value">Fall 2026</span></div>
+      <div class="monitor-row"><span class="label">Next event</span><span class="value">Oct 15 · General Body Meeting</span></div>
+      <div class="monitor-row"><span class="label">Now recruiting</span><span class="value">Writers, editors &amp; designers</span></div>
+    </aside>
+  </div>
+
+  <div class="wrap strip" aria-hidden="true">
+    <svg viewBox="0 0 1200 140" preserveAspectRatio="none">
+      <path class="trace" pathLength="1000" d="M0 88 H150 L162 80 L172 94 L186 78 L200 64 L210 100 L220 8 L230 134 L240 74 L248 84 L262 66 L282 86 L296 72 L312 88 H560 L572 80 L582 94 L596 78 L610 64 L620 100 L630 8 L640 134 L650 74 L658 84 L672 66 L692 86 L706 72 L722 88 H970 L982 80 L992 94 L1006 78 L1020 64 L1030 100 L1040 8 L1050 134 L1060 74 L1068 84 L1082 66 L1102 86 L1116 72 L1132 88 H1200"/>
+      <path class="sweep" pathLength="1000" d="M0 88 H150 L162 80 L172 94 L186 78 L200 64 L210 100 L220 8 L230 134 L240 74 L248 84 L262 66 L282 86 L296 72 L312 88 H560 L572 80 L582 94 L596 78 L610 64 L620 100 L630 8 L640 134 L650 74 L658 84 L672 66 L692 86 L706 72 L722 88 H970 L982 80 L992 94 L1006 78 L1020 64 L1030 100 L1040 8 L1050 134 L1060 74 L1068 84 L1082 66 L1102 86 L1116 72 L1132 88 H1200"/>
+    </svg>
+    <div class="strip-meta"><span>Lead II · University of Chicago</span><span>25 mm/s · 10 mm/mV</span></div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="block" id="about" aria-labelledby="about-title">
+  <div class="wrap about-grid">
+    <div class="section-head">
+      <p class="eyebrow">About Pulse</p>
+      <h2 id="about-title" class="visually-h2">The art and science of <em>care.</em></h2>
+    </div>
+    <div class="about-body">
+      <p class="about-statement">Our magazine explores the intersection between <em>creativity</em> and <em>medicine.</em></p>
+      <p>Past issues feature articles on topics including cancer, artificial intelligence, immunology, health policies, and so much more. We welcome writers, editors, and designers with all levels of experience.</p>
+      <ul class="topics" aria-label="Topics from past issues">
+        <li>Cancer <span>Oncology</span></li>
+        <li>Artificial intelligence <span>Technology</span></li>
+        <li>Immunology <span>Science</span></li>
+        <li>Health policy <span>Society</span></li>
+        <li class="more">…and so much more</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ISSUES =================
+  HOW TO ADD AN ISSUE:
+  1. Put the PDF in the "issues" folder, e.g. issues/fall-2026.pdf
+  2. Put the cover image in the "images/covers" folder, e.g. images/covers/fall-2026.jpg
+  3. Point the link's href at the PDF, and swap the placeholder cover for:
+       <img src="images/covers/fall-2026.jpg" alt="Cover of the Fall 2026 issue">
+  PDFs open in the reader's built-in browser viewer in a new tab.
+-->
+<section class="block alt" id="issues" aria-labelledby="issues-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Issues</p>
+      <h2 id="issues-title">Read Pulse</h2>
+      <p class="intro">Every issue is free to read online. Open the current issue or browse the archive below.</p>
+    </div>
+
+    <div class="issues-layout">
+      <!-- CURRENT ISSUE -->
+      <article class="featured">
+        <div class="cover ecg-paper">
+          <!-- Replace this whole block's contents with: <img src="images/covers/fall-2026.jpg" alt="Cover of the Fall 2026 issue"> -->
+          <svg class="mini-mark" viewBox="0 0 200 42" aria-hidden="true"><text x="0" y="25" font-family="Michroma, Arial Black, sans-serif" font-size="22" textLength="96" lengthAdjust="spacingAndGlyphs" fill="currentColor">PULSE</text><path d="M0 32 H112 L118 28 L122 35 L128 26 L134 19 L139 36 L145 3 L151 40 L156 27 L160 31 L166 23 L174 32 H198" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+          <span class="cover-note">Cover image</span>
+          <div class="cover-foot"><span>Fall 2026</span><span>Vol. —</span></div>
+        </div>
+        <div class="featured-copy">
+          <p class="eyebrow">Current issue · Fall 2026</p>
+          <h3>Issue title goes here</h3>
+          <p class="desc">A two- or three-sentence description of this issue: its theme, a few of the featured articles, and who contributed. Readers see this before they open the PDF.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="issues/fall-2026.pdf" target="_blank" rel="noopener">
+              Read the issue
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- PAST ISSUES: copy one <a class="issue-card"> block per issue -->
+      <div>
+        <div class="archive-head"><h3>Past issues</h3><span class="label">PDF</span></div>
+        <div class="archive">
+          <a class="issue-card" href="issues/spring-2026.pdf" target="_blank" rel="noopener">
+            <div class="cover ecg-paper"><span></span><span class="cover-note">Cover image</span><div class="cover-foot"><span>Spring 2026</span></div></div>
+            <h4>Issue title</h4><span class="read">Read PDF →</span>
+          </a>
+          <a class="issue-card" href="issues/winter-2026.pdf" target="_blank" rel="noopener">
+            <div class="cover ecg-paper"><span></span><span class="cover-note">Cover image</span><div class="cover-foot"><span>Winter 2026</span></div></div>
+            <h4>Issue title</h4><span class="read">Read PDF →</span>
+          </a>
+          <a class="issue-card" href="issues/fall-2025.pdf" target="_blank" rel="noopener">
+            <div class="cover ecg-paper"><span></span><span class="cover-note">Cover image</span><div class="cover-foot"><span>Fall 2025</span></div></div>
+            <h4>Issue title</h4><span class="read">Read PDF →</span>
+          </a>
+          <a class="issue-card" href="issues/spring-2025.pdf" target="_blank" rel="noopener">
+            <div class="cover ecg-paper"><span></span><span class="cover-note">Cover image</span><div class="cover-foot"><span>Spring 2025</span></div></div>
+            <h4>Issue title</h4><span class="read">Read PDF →</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EVENTS =================
+  Copy one <li class="event"> block per event. Delete events once they have passed.
+  (The events below are placeholders: replace dates, times, places and descriptions.)
+-->
+<section class="block" id="events" aria-labelledby="events-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Events</p>
+      <h2 id="events-title">Upcoming events</h2>
+      <p class="intro">Meetings, workshops, and launch parties are open to all UChicago students. No experience needed.</p>
+    </div>
+    <ul class="events">
+      <li class="event">
+        <div class="date"><span class="m">Oct</span><span class="d">15</span><span class="w">Thu</span></div>
+        <div class="event-body">
+          <h3>General Body Meeting</h3>
+          <p class="event-meta">7:00 PM · Location TBA</p>
+          <p class="desc">Meet the board, hear about this quarter’s issue, and pick up a writing, editing, or design assignment.</p>
+        </div>
+        <span class="tag">Meeting</span>
+      </li>
+      <li class="event">
+        <div class="date"><span class="m">Oct</span><span class="d">29</span><span class="w">Thu</span></div>
+        <div class="event-body">
+          <h3>Writing Workshop</h3>
+          <p class="event-meta">7:00 PM · Location TBA</p>
+          <p class="desc">Bring a draft or an idea. Editors will help you shape a pitch into a finished article.</p>
+        </div>
+        <span class="tag">Workshop</span>
+      </li>
+      <li class="event">
+        <div class="date"><span class="m">Nov</span><span class="d">12</span><span class="w">Thu</span></div>
+        <div class="event-body">
+          <h3>Issue Launch Party</h3>
+          <p class="event-meta">6:30 PM · Location TBA</p>
+          <p class="desc">Celebrate the new issue with the writers, editors, and designers who made it.</p>
+        </div>
+        <span class="tag">Launch</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= TEAM =================
+  TO ADD A HEADSHOT: put the photo in images/team/ (e.g. images/team/jane-doe.jpg),
+  then replace the contents of <div class="headshot ecg-paper"> with:
+     <img src="images/team/jane-doe.jpg" alt="Jane Doe">
+  Square or portrait photos (4:5) look best.
+-->
+<section class="block alt" id="team" aria-labelledby="team-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Our Team</p>
+      <h2 id="team-title">The people behind Pulse</h2>
+    </div>
+
+    <div class="team-group">
+      <h3 class="label group-label">Editors-in-Chief</h3>
+      <div class="people">
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Editor-in-Chief</span></figcaption></figure>
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Editor-in-Chief</span></figcaption></figure>
+      </div>
+    </div>
+
+    <div class="team-group">
+      <h3 class="label group-label">Senior Editors</h3>
+      <div class="people">
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Senior Editor</span></figcaption></figure>
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Senior Editor</span></figcaption></figure>
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Senior Editor</span></figcaption></figure>
+        <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Senior Editor</span></figcaption></figure>
+      </div>
+    </div>
+
+    <div class="team-split">
+      <div class="team-group">
+        <h3 class="label group-label">Director of Finance</h3>
+        <div class="people">
+          <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Director of Finance</span></figcaption></figure>
+        </div>
+      </div>
+      <div class="team-group">
+        <h3 class="label group-label">Chief of Production</h3>
+        <div class="people">
+          <figure class="person"><div class="headshot ecg-paper"><svg class="silhouette" aria-hidden="true"><use href="#silhouette"/></svg><span class="ph">Headshot</span></div><figcaption><span class="name">Full Name</span><span class="role">Chief of Production</span></figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOIN ================= -->
+<section class="block" id="join" aria-labelledby="join-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Get involved</p>
+      <h2 id="join-title">Join the staff</h2>
+      <p class="intro">We welcome writers, editors, and designers with all levels of experience. Pick the role that interests you, or try more than one.</p>
+    </div>
+    <div class="roles">
+      <div class="role-col">
+        <p class="label">Writers</p>
+        <h3>Tell the story</h3>
+        <p>Report on new research, interview physicians and scientists, or write essays and creative pieces about medicine.</p>
+      </div>
+      <div class="role-col">
+        <p class="label">Editors</p>
+        <h3>Sharpen the work</h3>
+        <p>Work with writers draft by draft, check facts and sources, and keep every article clear and accurate.</p>
+      </div>
+      <div class="role-col">
+        <p class="label">Designers</p>
+        <h3>Shape the page</h3>
+        <p>Lay out each issue, create illustrations and covers, and give Pulse its visual identity.</p>
+      </div>
+    </div>
+    <div class="join-note">
+      <p>New to writing or design? Most of our staff were too. Come to a meeting or send us an email.</p>
+      <a class="btn btn-primary" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="block alt" id="contact" aria-labelledby="contact-title">
+  <div class="wrap contact-grid">
+    <div class="section-head">
+      <p class="eyebrow">Contact us</p>
+      <h2 id="contact-title">Say hello</h2>
+      <p class="intro">Questions about joining, submitting work, or collaborating with Pulse? Reach out and a member of the board will reply.</p>
+    </div>
+    <div class="channels">
+      <!-- Replace the email address in BOTH places below (the link and the copy button) -->
+      <div class="channel">
+        <span class="label">Email</span>
+        <div class="row">
+          <a class="value" id="email" href="mailto:your-email@uchicago.edu">your-email@uchicago.edu</a>
+          <button class="copy-btn" id="copy-btn" type="button" data-copy="your-email@uchicago.edu">Copy</button>
+        </div>
+      </div>
+      <div class="channel">
+        <span class="label">Instagram</span>
+        <a class="value" href="https://www.instagram.com/" target="_blank" rel="noopener">@your_handle</a>
+      </div>
+      <div class="channel">
+        <span class="label">Campus</span>
+        <span class="value">University of Chicago, Chicago, IL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <svg class="lockup" viewBox="0 0 600 130" role="img" aria-label="Pulse Medical Magazine">
+        <text x="0" y="62" font-family="Michroma, Arial Black, sans-serif" font-size="52" textLength="290" lengthAdjust="spacingAndGlyphs" fill="currentColor">PULSE</text>
+        <path d="M0 78 H350 L362 71 L370 83 L384 68 L398 54 L408 92 L418 4 L428 124 L438 66 L446 76 L460 58 L480 78 L494 62 L510 80 H596" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+        <text x="22" y="104" font-family="Michroma, Arial, sans-serif" font-size="15" textLength="300" lengthAdjust="spacingAndGlyphs" fill="currentColor">MEDICAL MAGAZINE</text>
+      </svg>
+      <div class="foot-meta">
+        <span>An undergraduate publication at the University of Chicago</span>
+        <span>© <span id="year">2026</span> Pulse Medical Magazine</span>
+      </div>
+    </div>
+    <p class="disclaimer">Pulse is written by students for educational and creative purposes. Nothing published here is medical advice; please talk with a qualified health professional about your own health.</p>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  (function () {
+    var btn = document.getElementById('menu-btn');
+    var links = document.getElementById('nav-links');
+    btn.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.textContent = open ? 'Close' : 'Menu';
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { links.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); btn.textContent = 'Menu'; }
+    });
+  })();
+
+  // Copy email button
+  (function () {
+    var btn = document.getElementById('copy-btn');
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-copy');
+      function done() { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(document.getElementById('email'));
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = 'Selected';
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    });
+  })();
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
